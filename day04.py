@@ -3,15 +3,28 @@ def compute_possibilities(lo: int, hi: int) -> int:
     count = 0
     for num in nums:
         s = str(num)
-        valid = True
-        doubles = False
+        valid = True     # Used for breaking.
+        doubles = False  # Whether an exact double has been found.
+        repeating = 0    # Counts sequential repetitions of a digit.
         for lc, rc in zip(s[:-1], s[1:]):
             if rc < lc:
+                # Digits must never decrease.
                 valid = False
                 break
-            doubles |= lc == rc
-        valid &= doubles
-        if valid:
+            elif lc == rc:
+                # We're in a repetition.
+                repeating += 1
+            else:
+                # If the digit was repeated exactly once, there is a double.
+                if repeating == 1:
+                    doubles = True
+                # Mr. Gaeta, restart the clock!
+                repeating = 0
+        # Check whether the last pair of digits formed a double.
+        if repeating == 1:
+            doubles = True
+        # Count only valid numbers.
+        if valid & doubles:
             count += 1
     return count
 
